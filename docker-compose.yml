@@ -13,6 +13,17 @@ services:
     depends_on:
       - db
 
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+
   db:
     image: postgres:15
     container_name: postgres_emprestimo
@@ -25,13 +36,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  seed:
+    build: .
+    command: python app/seed.py
+    depends_on:
+      - db
+    env_file:
+      - .env
+
 volumes:
   pgdata:
-
-seed:
-  build: .
-  command: python app/seed.py
-  depends_on:
-    - db
-  env_file:
-    - .env
