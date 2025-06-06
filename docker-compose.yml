@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  db:
+    image: postgres:15
+    container_name: postgres_emprestimo
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: riscos
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   api:
     build: .
     container_name: api_emprestimo
@@ -17,28 +29,20 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+    container_name: frontend_emprestimo
     ports:
       - "8501:8501"
     depends_on:
       - api
     volumes:
       - .:/app
-
-  db:
-    image: postgres:15
-    container_name: postgres_emprestimo
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: riscos
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
 
   seed:
     build: .
     command: python app/seed.py
+    container_name: seed_emprestimo
     depends_on:
       - db
     env_file:
