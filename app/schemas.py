@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Literal, Optional
 
 # Entrada recebida pelo frontend
-
 class Solicitacao(BaseModel):
     descricao: str
 
